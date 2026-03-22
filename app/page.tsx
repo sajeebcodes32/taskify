@@ -271,7 +271,7 @@ function TaskRow({task,onToggle,onEdit,onDelete,onStatusChange,isNew}:
 }
 
 // ─── Board Card ───────────────────────────────────────────────────────────────
-function BoardCard({task,onEdit,onDelete}:{task:Task;onEdit:(t:Task)=>void;onDelete:(id:string)=>void}) {
+function BoardCard({task,onEdit,onDelete,onStatusChange}:{task:Task;onEdit:(t:Task)=>void;onDelete:(id:string)=>void;onStatusChange:(id:string,s:Status)=>void}) {
   const pm=PM[task.priority]; const dateInfo=fmtDate(task.dueDate)
   const subsDone=task.subtasks.filter(x=>x.done).length
   return (
