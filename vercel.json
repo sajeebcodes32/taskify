@@ -2,9 +2,5 @@
   "buildCommand": "next build",
   "devCommand": "next dev",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "regions": ["iad1"],
-  "env": {
-    "MONGODB_URI": "@mongodb_uri"
-  }
+  "framework": "nextjs"
 }
