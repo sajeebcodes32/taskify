@@ -64,15 +64,18 @@ function playChime() {
 }
 
 // ─── Confetti ─────────────────────────────────────────────────────────────────
+type ConfettiFn = (opts: Record<string,unknown>) => void
+declare global { interface Window { confetti?: ConfettiFn } }
+
 function fireConfetti(x:number,y:number) {
   if(typeof window==='undefined') return
   const run=()=>{
-    const c=(window as unknown as Record<string,unknown>).confetti as ((o:Record<string,unknown>)=>void)|undefined
-    if(!c) return
-    c({particleCount:80,spread:360,startVelocity:25,origin:{x:x/window.innerWidth,y:y/window.innerHeight},
+    if(!window.confetti) return
+    window.confetti({particleCount:80,spread:360,startVelocity:25,
+      origin:{x:x/window.innerWidth,y:y/window.innerHeight},
       colors:['#2383E2','#0F7B6C','#DFAB01','#E03E3E','#8B5CF6'],gravity:0.9,scalar:0.9,ticks:80})
   }
-  if((window as unknown as Record<string,unknown>).confetti){run();return}
+  if(window.confetti){run();return}
   const sc=document.createElement('script')
   sc.src='https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js'
   sc.onload=run; document.head.appendChild(sc)
