@@ -1,28 +1,38 @@
+// File 3: app/api/tasks/[id]/route.ts
 import { NextResponse } from 'next/server'
 import connectDB from '@/lib/db'
 import Task from '@/models/Task'
 export const runtime = 'nodejs'
+
 type Ctx = { params: Promise<{ id: string }> }
 
-export async function PATCH(req: Request, { params }: Ctx) {
+export async function GET(request: Request, { params }: Ctx) {
   try {
-    await connectDB()
     const { id } = await params
-    const body = await req.json()
-    if (body.status === 'done' && !body.completedAt) body.completedAt = new Date()
-    if (body.status && body.status !== 'done') body.completedAt = null
-    const task = await Task.findByIdAndUpdate(id, { $set: body }, { new:true, runValidators:true })
-    if (!task) return NextResponse.json({ success:false, error:'Not found' },{ status:404 })
+    await connectDB()
+    const task = await Task.findById(id).lean()
+    if (!task) return NextResponse.json({ success:false, error:'Task not found' },{ status:404 })
+    return NextResponse.json({ success:true, data:task })
+  } catch { return NextResponse.json({ success:false, error:'Failed to fetch' },{ status:500 }) }
+}
+
+export async function PUT(request: Request, { params }: Ctx) {
+  try {
+    const { id } = await params
+    await connectDB()
+    const body = await request.json()
+    const task = await Task.findByIdAndUpdate(id, body, { new:true }).lean()
+    if (!task) return NextResponse.json({ success:false, error:'Task not found' },{ status:404 })
     return NextResponse.json({ success:true, data:task })
   } catch { return NextResponse.json({ success:false, error:'Failed to update' },{ status:500 }) }
 }
 
-export async function DELETE(_req: Request, { params }: Ctx) {
+export async function DELETE(request: Request, { params }: Ctx) {
   try {
-    await connectDB()
     const { id } = await params
-    const task = await Task.findByIdAndDelete(id)
-    if (!task) return NextResponse.json({ success:false, error:'Not found' },{ status:404 })
-    return NextResponse.json({ success:true, data:{} })
+    await connectDB()
+    const task = await Task.findByIdAndDelete(id).lean()
+    if (!task) return NextResponse.json({ success:false, error:'Task not found' },{ status:404 })
+    return NextResponse.json({ success:true, data:task })
   } catch { return NextResponse.json({ success:false, error:'Failed to delete' },{ status:500 }) }
 }
