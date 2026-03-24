@@ -1,3 +1,4 @@
+// File 1: models/Task.ts
 import mongoose, { Schema } from 'mongoose';
 
 const TaskSchema = new Schema({
@@ -9,4 +10,6 @@ const TaskSchema = new Schema({
     focusModeStartedAt: { type: Date, default: null },
 });
 
-export const Task = mongoose.model('Task', TaskSchema);
+const Task = mongoose.model('Task', TaskSchema);
+
+export default Task;
