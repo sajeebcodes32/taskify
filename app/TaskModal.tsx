@@ -1,7 +1,20 @@
 // File 5: app/TaskModal.tsx
 import React, { useState } from 'react'
 
-function TaskModal({ isOpen, onClose, task, onSave }: any) {
+interface Task {
+  title: string
+  description: string
+  isFocused: boolean
+}
+
+interface TaskModalProps {
+  isOpen: boolean
+  onClose: () => void
+  task?: Task
+  onSave: (task: Task) => void
+}
+
+function TaskModal({ isOpen, onClose, task, onSave }: TaskModalProps) {
   const [title, setTitle] = useState(task?.title || '')
   const [description, setDescription] = useState(task?.description || '')
   const [isFocused, setIsFocused] = useState(task?.isFocused || false)
