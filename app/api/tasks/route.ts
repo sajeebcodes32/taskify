@@ -1,24 +1,35 @@
-import { NextResponse } from 'next/server';
-import { connectToDatabase } from '../../../util/mongodb';
+// File 2: app/api/tasks/route.ts
+import { NextResponse } from 'next/server'
+import connectDB from '@/lib/db'
+import Task from '@/models/Task'
+export const runtime = 'nodejs'
 
-export async function POST(request) {
-    const body = await request.json();
-    const { title, description, focusMode, focusModeStartedAt } = body;
+export async function GET() {
+  try {
+    await connectDB()
+    const tasks = await Task.find({}).sort({ order:1, createdAt:-1 }).lean()
+    return NextResponse.json({ success:true, data:tasks })
+  } catch { return NextResponse.json({ success:false, error:'Failed to fetch' },{ status:500 }) }
+}
 
-    if (!title || !description) {
-        return NextResponse.json({ message: 'Title and Description are required.' }, { status: 400 });
-    }
-
-    const { db } = await connectToDatabase();
-    const task = {  
-        title,  
-        description,
-        focusMode: focusMode || false,
-        focusModeStartedAt: focusModeStartedAt || null,
-        createdAt: new Date(),
-    };
-
-    const response = await db.collection('tasks').insertOne(task);
-
-    return NextResponse.json(response.ops[0], { status: 201 });
+export async function POST(request: Request) {
+  try {
+    await connectDB()
+    const body = await request.json()
+    if (!body.name?.trim()) return NextResponse.json({ success:false, error:'Name required' },{ status:400 })
+    const task = await Task.create({
+      name: body.name.trim(), 
+      description: body.description||'', 
+      status: body.status||'todo',
+      priority: body.priority||'medium', 
+      dueDate: body.dueDate||null, 
+      tags: body.tags||[],
+      estimatedMin: body.estimatedMin||25, 
+      subtasks: body.subtasks||[], 
+      notes: body.notes||'',
+      focusMode: body.focusMode||false, 
+      focusModeStartedAt: body.focusModeStartedAt||null,
+    })
+    return NextResponse.json({ success:true, data:task },{ status:201 })
+  } catch { return NextResponse.json({ success:false, error:'Failed to create' },{ status:500 }) }
 }
