@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+// File 5: app/TaskModal.tsx
+import React, { useState } from 'react'
 
-function TaskModal({ isOpen, onClose, task, onSave }) {
-  const [title, setTitle] = useState(task?.title || '');
-  const [description, setDescription] = useState(task?.description || '');
-  const [isFocused, setIsFocused] = useState(task?.isFocused || false);
+function TaskModal({ isOpen, onClose, task, onSave }: any) {
+  const [title, setTitle] = useState(task?.title || '')
+  const [description, setDescription] = useState(task?.description || '')
+  const [isFocused, setIsFocused] = useState(task?.isFocused || false)
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   const handleSave = () => {
     onSave({ 
@@ -13,9 +14,9 @@ function TaskModal({ isOpen, onClose, task, onSave }) {
       title, 
       description, 
       isFocused 
-    });
-    onClose();
-  };
+    })
+    onClose()
+  }
 
   return (
     <div 
@@ -117,7 +118,7 @@ function TaskModal({ isOpen, onClose, task, onSave }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default TaskModal;
+export default TaskModal
